@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        BigInt    @id @map("_id") // Your Telegram ID
+  username  String?
+  friends   Friend[]
+  expenses  Expense[]
+}
+
+model Friend {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  name    String   // Name you give your friend
+  userId  BigInt
+  user    User     @relation(fields: [userId], references: [id])
+  splits  ExpenseSplit[]
+  
+  @@unique([userId, name])
+}
+
+model Expense {
+  id          String         @id @default(auto()) @map("_id") @db.ObjectId
+  userId      BigInt
+  user        User           @relation(fields: [userId], references: [id])
+  amount      Float          // Total cost
+  description String
+  date        DateTime       @default(now())
+  isPersonal  Boolean        @default(true)
+  splits      ExpenseSplit[]
+}
+
+model ExpenseSplit {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  expenseId   String   @db.ObjectId
+  expense     Expense  @relation(fields: [expenseId], references: [id])
+  friendId    String   @db.ObjectId
+  friend      Friend   @relation(fields: [friendId], references: [id])
+  amount      Float    // Portion owed by this friend
+  isSettled   Boolean  @default(false)
+}
