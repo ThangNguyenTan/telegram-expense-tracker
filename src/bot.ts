@@ -1,6 +1,7 @@
 import { Telegraf } from "telegraf";
 import * as dotenv from "dotenv";
 import * as http from "http";
+import { IncomingMessage, ServerResponse } from "http";
 import { getOrCreateUser } from "./db/services";
 
 // Import commands
@@ -57,7 +58,7 @@ bot.launch().then(() => {
 // Simple health check server for Render
 const port = process.env.PORT || 3000;
 http
-  .createServer((req, res) => {
+  .createServer((req: IncomingMessage, res: ServerResponse) => {
     res.writeHead(200);
     res.end("Bot is alive!");
   })
