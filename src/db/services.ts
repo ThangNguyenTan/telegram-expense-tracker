@@ -182,3 +182,28 @@ export async function getStats(userId: number | bigint) {
 
   return { todayTotal, monthTotal, allTimeTotal };
 }
+
+export async function getTodayExpenses(userId: number | bigint) {
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  const expenses = await prisma.expense.findMany({
+    where: {
+      userId: BigInt(userId),
+      date: { gte: todayStart },
+    },
+    include: { splits: true },
+    orderBy: { date: "desc" },
+  });
+
+  return expenses.map((exp) => {
+    const friendPortion = exp.splits.reduce((acc, s) => acc + s.amount, 0);
+    const userPortion = exp.amount - friendPortion;
+    return {
+      description: exp.description,
+      amount: userPortion,
+      date: exp.date,
+      isPersonal: exp.isPersonal,
+    };
+  });
+}

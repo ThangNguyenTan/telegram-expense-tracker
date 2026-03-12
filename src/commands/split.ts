@@ -1,5 +1,6 @@
 import { Telegraf } from "telegraf";
 import { splitExpenseWithFriends } from "../db/services";
+import { formatVND } from "../utils/format";
 
 export function setupSplitCommand(bot: Telegraf) {
   // /split 100 Dinner /with Bob Alice
@@ -41,9 +42,9 @@ export function setupSplitCommand(bot: Telegraf) {
       );
 
       let replyText = `💸 *Expense Split Recorded!*\n\n`;
-      replyText += `Total: $${amount.toFixed(2)} (${description})\n`;
+      replyText += `Total: *${formatVND(amount)}* (${description})\n`;
       replyText += `Split with: ${friendNames.join(", ")}\n`;
-      replyText += `*Each owes you: $${result.splitAmount.toFixed(2)}*`;
+      replyText += `*Each owes you: ${formatVND(result.splitAmount)}*`;
 
       ctx.reply(replyText, { parse_mode: "Markdown" });
     } catch (e: any) {

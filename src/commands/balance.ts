@@ -1,5 +1,6 @@
 import { Telegraf } from "telegraf";
 import { getBalances, settleFriend } from "../db/services";
+import { formatVND } from "../utils/format";
 
 export function setupBalanceCommands(bot: Telegraf) {
   // /balances
@@ -11,7 +12,7 @@ export function setupBalanceCommands(bot: Telegraf) {
 
       let text = "💰 *Outstanding Debts to You:*\n\n";
       balances.forEach((b) => {
-        text += `- ${b.name}: owes you $${b.amount.toFixed(2)}\n`;
+        text += `- ${b.name}: owes you *${formatVND(b.amount)}*\n`;
       });
       text += "\nUse /settle <name> to clear a debt.";
 

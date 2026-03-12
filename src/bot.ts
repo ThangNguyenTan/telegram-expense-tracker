@@ -36,6 +36,7 @@ I will help you track your spending and debts.
 
 *Commands:*
 /add <amount> <desc> - Log personal expense
+/today - List your expenses for today
 /stats - See your spending total
 /friend add <name> - Add a friend to your ledger
 /friend list - See all friends
@@ -51,10 +52,6 @@ setupFriendCommands(bot);
 setupSplitCommand(bot);
 setupBalanceCommands(bot);
 
-bot.launch().then(() => {
-  console.log("Bot is running in SINGLE-USER mode!");
-});
-
 // Simple health check server for Render
 const port = process.env.PORT || 3000;
 http
@@ -62,7 +59,13 @@ http
     res.writeHead(200);
     res.end("Bot is alive!");
   })
-  .listen(port);
+  .listen(port, () => {
+    console.log(`Health check server listening on port ${port}`);
+  });
+
+bot.launch().then(() => {
+  console.log("Bot is running in SINGLE-USER mode!");
+});
 
 // Enable graceful stop
 process.once("SIGINT", () => bot.stop("SIGINT"));
